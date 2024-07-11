@@ -18,6 +18,7 @@ def main():
             read_receipt()
         elif command == 'u':
             update_inventory(inventory)
+        # write inventory list to csv before quiting the program
         elif command == 'q':
             write_csv(file_name, inventory)
             print("Changes saved to file. Exiting.")
@@ -25,6 +26,7 @@ def main():
         else:
             print("Invalid input")
 
+#return cs contents as a list
 def read_csv(file_name):
     inventory = []
     with open(file_name, mode='r') as file:
@@ -33,11 +35,13 @@ def read_csv(file_name):
             inventory.append(row)
     return inventory
 
+#save csv - write to food_inventory.csv
 def write_csv(file_name, inventory):
     with open(file_name, mode='w', newline='') as file:
         writer = csv.writer(file)
         writer.writerows(inventory)
 
+#save receipts for each transaction to receipts.csv
 def write_receipt(food, price, quantity, total):
     with open('receipts.csv', mode='a', newline='') as file:
         writer = csv.writer(file)
@@ -45,15 +49,15 @@ def write_receipt(food, price, quantity, total):
         date_time = now.strftime("%Y-%m-%d,%H:%M:%S")
         writer.writerow([date_time.split(",")[0], date_time.split(",")[1], food, price, quantity, total])
 
+#display reciepts for menu
 def read_receipt(): 
     with open('receipts.csv', mode='r') as file:
         reader = csv.reader(file)
         for row in reader:
             print(row)
 
-
+#display inventory
 def display_inventory(inventory):
-
     col1_width = max(len(item[0]) for item in inventory) + 2
     col2_width = max(len(str(item[1])) for item in inventory) + 2
     col3_width = max(len(str(item[2])) for item in inventory) + 2
@@ -63,6 +67,7 @@ def display_inventory(inventory):
         print("-" * (col1_width + col2_width + col3_width))
     print()
 
+# add food to inventory list
 def add_food(inventory):
     item_name = input("Enter the item name to add: ")
     price = input(f"Enter the price for {item_name}: ")
@@ -70,6 +75,7 @@ def add_food(inventory):
     inventory.append([item_name, price, quantity])
     print(f"{item_name} added successfully.")
 
+#order food, write to reciepts after order is successful
 def order_food(inventory):
     display_inventory(inventory)
     item_name = input("Enter the item name to order: ")
@@ -84,12 +90,13 @@ def order_food(inventory):
                 return
             item[2] = str(int(item[2]) - quantity)
             total_price = float(item[1]) * quantity
-            print(f"{quantity} {item_name} ordered successfully.")
+            print(f"{quantity} {item_name} order complete.")
             print(f"total price: {float(item[1]) * quantity}")
             write_receipt(item_name, item[1], quantity, total_price)
             return
     print(f"{item_name} not found in inventory.")
 
+# update inventory items from inventory list
 def update_inventory(inventory):
     display_inventory(inventory)
     item_name = input("Enter the item name to update: ")
@@ -101,6 +108,7 @@ def update_inventory(inventory):
             return
     print(f"{item_name} not found in inventory.")
 
+# remove food item from inventory list
 def delete_food(inventory):
     display_inventory(inventory)
     item_name = input("Enter the item name to delete: ")
