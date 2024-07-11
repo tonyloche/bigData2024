@@ -5,7 +5,15 @@ def main():
     file_name = 'food_inventory.csv'
     inventory = read_csv(file_name)
     while True:
-        command = input("Menu:[A] Add food, [D] Delete food, [I] Inventory, [O] Order food,[R] Read reciepts [U] Update, [Q] Quit\n").lower()
+        print("Menu:")
+        print(" [A] Add food")
+        print(" [D] Delete food")
+        print(" [I] Inventory")
+        print(" [O] Order food")
+        print(" [R] Read receipts")
+        print(" [U] Update")
+        print(" [Q] Quit")
+        command = input("\nPlease select an option: ").lower()
         if command == 'i':
             display_inventory(inventory)
         elif command == 'a':
