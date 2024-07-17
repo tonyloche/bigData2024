@@ -85,12 +85,26 @@ db.movies.updateOne({title:"Pulp Fiction"},{$push:{actors: "samy jacson"}})
 ### Text Search
 
 1) find all movies that have a synopsis that contains the word "Bilbo"
+    - db.movies.find({$text: {$search:"Bilbo"}})
+
 2) find all movies that have a synopsis that contains the word "Gandalf"
+  - db.movies.find({synopsis: /Gangalf/})
+
 3) find all movies that have a synopsis that contains the word "Bilbo" and not the word "Gandalf"
+  - db.movies.find({$textt:{$search: "Bilbo -Gandolf"}})
+
 4) find all movies that have a synopsis that contains the word "dwarves" or "hobbit"
+  - db.movies.find({$text: {$search: "dwarves|hobbit"}})
+
 5) find all movies that have a synopsis that contains the word "gold" and "dragon"
+  - db.movies.find({$text:"gold",$searcj:"dragon"});
+
 -----------------------------------------------------------------------
 ### Delete Documents
 
-1) delete the movie "Pee Wee Herman's Big Adventure"
-2) delete the movie "Avatar"
+1) delete the movie "Fight Club"
+  -db.movies.deleteOne({title:"Fight Club"})
+
+2) delete the movie where clinton tarantino is a writer
+  -db.movies.deleteMany({writer:"Clinton Tarantino"})
+  
