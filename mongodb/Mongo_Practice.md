@@ -76,6 +76,7 @@ db.movies.find({$or: [{year:{$lt:2000}},{year: {$gt:2010}}]})
 ### Update Documents
 
 1) add a synopsis to "The Hobbit: An Unexpected Journey" : "A reluctant hobbit, Bilbo Baggins, sets out to the Lonely Mountain with a spirited group of dwarves to reclaim their mountain home - and the gold within it - from the dragon Smaug."
+db.movies.updateOne
 2) add a synopsis to "The Hobbit: The Desolation of Smaug" : "The dwarves, along with Bilbo Baggins and Gandalf the Grey, continue their quest to reclaim Erebor, their homeland, from Smaug. Bilbo Baggins is in possession of a mysterious and magical ring."
 3) add an actor named "Samuel L. Jackson" to the movie "Pulp Fiction"
 ---------------------------------------------------------------------------------
