@@ -32,6 +32,9 @@ def main():
     #insert employees data to database
     # db.employees.insert_many(employees_data)
 
+    #aggregate mongo commands:
+    #db.orders.aggregate([{$group: {_id: "$customerName", totalAmount: {$sum: "$amount"}}}])
+    #db.order.aggregate([{$group: {_id: null, average_spent: {$avg: "a$amount"}}}])
     
 
 
