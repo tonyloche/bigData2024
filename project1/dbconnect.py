@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 import re
-import json
+from user_menu import UserMenu
 
 class DBConnect:
     def __init__(self):
@@ -41,6 +41,8 @@ class DBConnect:
         user = self.users_collection.find_one({'username': username, 'password': password})
         if user:
             print("Login successful.")
+            user_menu = UserMenu()
+            user_menu.display_menu()
         else:
             print("Invalid username or password.")
 
