@@ -1,11 +1,13 @@
 from pymongo import MongoClient
+from cart import Cart  # Import the Cart class
 
 class Shop:
-    def __init__(self):
+    def __init__(self, user_id):
         self.client = MongoClient('mongodb://localhost:27017/')
         self.db = self.client['project1']
         self.products_collection = self.db['products']
         self.cart = []
+        self.user_id = user_id
 
     def display_products(self):
         products = self.products_collection.find()
@@ -53,15 +55,29 @@ class Shop:
             print("Your cart is empty.")
             return
         
-        print("\n--- Cart Summary ---")
-        for item in self.cart:
-            print(f"{item['quantity']} x {item['name']} ({item['size'] if item['size'] else 'No Size'}) - ${item['price']:.2f} each")
-        print()
-        print("Prepare to send this information to the next class...")
-        # This is where you would call the next class to handle checkout
+        # Pass the cart contents to the Cart class
+        cart_instance = Cart(self.user_id, self.cart)
+        
+        while True:
+            print("\n--- Cart Menu ---")
+            action = input("Choose an option: [1] View Cart [2] Modify Cart [3] Checkout [4] Back to Shop: ")
+            if action == '1':
+                cart_instance.display_cart()
+            elif action == '2':
+                cart_instance.modify_cart()
+            elif action == '3':
+                cart_instance.checkout()
+                # Optionally clear the cart after checkout
+                self.cart = cart_instance.cart
+                break
+            elif action == '4':
+                break
+            else:
+                print("Invalid choice. Please select again.")
 
 def main():
-    shop = Shop()
+    user_id = 1  # Replace with actual user ID logic
+    shop = Shop(user_id)
     
     while True:
         print("\n--- Shop Menu ---")

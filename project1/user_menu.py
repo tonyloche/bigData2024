@@ -1,9 +1,10 @@
 from shop import Shop
 
 class UserMenu:
-    def __init__(self):
-        self.shop = Shop()
-    
+    def __init__(self, user_id):
+        self.user_id = user_id
+        self.shop = Shop(user_id)  # Pass user_id to Shop
+
     def display_menu(self):
         while True:
             print("\n--- User Menu ---")
