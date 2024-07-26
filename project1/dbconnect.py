@@ -1,6 +1,5 @@
 from pymongo import MongoClient
 import re
-from user_menu import UserMenu
 
 class DBConnect:
     def __init__(self):
@@ -42,7 +41,8 @@ class DBConnect:
         if user:
             print("Login successful.")
             user_id = user['id']  # Get the user_id
-            user_menu = UserMenu(user_id)  # Pass user_id to UserMenu
+            from user_menu import UserMenu  # Import here to avoid circular import issues
+            user_menu = UserMenu(user_id, self)  # Pass user_id and DBConnect instance to UserMenu
             user_menu.display_menu()
         else:
             print("Invalid username or password.")
