@@ -9,7 +9,7 @@ class AdminMenu:
     def display_menu(self):
         while True:
             print("\n--- Admin Menu ---")
-            choice = input("Choose an option: [1] Add New Product [2] View Product [3] Edit Product [4] Delete Product [5] View all orders [6] Log out: ")
+            choice = input("Choose an option: [1] Add New Product [2] View Product [3] Edit Product [4] Delete Product [5] View all orders [6] View all users [7] log out: ")
             if choice == '1':
                 self.add_product()
             elif choice == '2':
@@ -21,6 +21,8 @@ class AdminMenu:
             elif choice == '5':
                 self.view_all_orders()
             elif choice == '6':
+                self.display_all_users()
+            elif choice == '7':
                 print("Logging out...")
                 break
             else:
@@ -93,4 +95,11 @@ class AdminMenu:
         print("\n--- Products List ---")
         for product in products:
             print(f"Name: {product['item']}, Price: ${product['price']:.2f}, Quantity: {product['quantity']}")
+        print()
+    
+    def display_all_users(self):
+        users = self.db_connect.users_collection.find()
+        print("\n--- All Users ---")
+        for user in users:
+            print(f"Username: {user['username']}")
         print()

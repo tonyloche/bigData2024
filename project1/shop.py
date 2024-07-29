@@ -91,7 +91,7 @@ class Shop:
                 new_quantity = product['quantity'] - item['quantity']
                 if new_quantity < 0:
                     print(f"Not enough stock for {item['item']}.")
-                    continue  # Skip updating this item if there's not enough stock
+                    continue  # Skip updating if there's not enough stock
                 
                 self.products_collection.update_one(
                     {'_id': product['_id']},
