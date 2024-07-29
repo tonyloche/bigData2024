@@ -6,30 +6,17 @@ class DBConnect:
         self.client = MongoClient('mongodb://localhost:27017/')
         self.db = self.client['project1']
         self.users_collection = self.db['users']
-        self.counter_collection = self.db['counters']
-
-    def get_next_sequence(self, sequence_name):
-        self.counter_collection.update_one(
-            {'_id': sequence_name},
-            {'$inc': {'sequence_value': 1}},
-            upsert=True
-        )
-        return self.counter_collection.find_one({'_id': sequence_name})['sequence_value']
 
     def validate_password(self, password):
         pattern = re.compile(r'^(?=.*[A-Z])(?=.*\W).{8,}$')
         return pattern.match(password) is not None
 
-    def create_user(self, first_name, last_name, username, password):
+    def create_user(self, username, password):
         if not self.validate_password(password):
             print("Password does not meet the requirements.")
             return
         
-        user_id = self.get_next_sequence('user_id')
         user = {
-            'id': user_id,
-            'first_name': first_name,
-            'last_name': last_name,
             'username': username,
             'password': password
         }
@@ -40,10 +27,16 @@ class DBConnect:
         user = self.users_collection.find_one({'username': username, 'password': password})
         if user:
             print("Login successful.")
-            user_id = user['id']  # Get the user_id
-            from user_menu import UserMenu  # Import here to avoid circular import issues
-            user_menu = UserMenu(user_id, self)  # Pass user_id and DBConnect instance to UserMenu
-            user_menu.display_menu()
+            user_id = user['_id']
+            if str(user_id) == "66a7f1bcff3c12945d83b915":
+                #print("Admin login successful.")
+                from admin_menu import AdminMenu
+                admin_menu = AdminMenu(self)
+                admin_menu.display_menu()
+            else:
+                from user_menu import UserMenu 
+                user_menu = UserMenu(user_id, self)
+                user_menu.display_menu()
         else:
             print("Invalid username or password.")
 
@@ -57,11 +50,9 @@ def main():
             password = input("Enter password: ")
             db_connect.login_user(username, password)
         elif choice == '2':
-            first_name = input("Enter first name: ")
-            last_name = input("Enter last name: ")
             username = input("Enter username: ")
             password = input("Enter password: ")
-            db_connect.create_user(first_name, last_name, username, password)
+            db_connect.create_user(username, password)
         elif choice == '3':
             break
         else:

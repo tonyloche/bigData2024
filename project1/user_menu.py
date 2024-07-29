@@ -1,21 +1,20 @@
-from shop import Shop  # Import Shop here
+from shop import Shop
 
 class UserMenu:
     def __init__(self, user_id, db_connect):
         self.user_id = user_id
         self.db_connect = db_connect
+        self.shop = Shop(self.user_id, self.db_connect.db)  # Create a single instance of Shop
 
     def display_menu(self):
         while True:
             print("\n--- User Menu ---")
             choice = input("Choose an option: [1] Shop [2] View Cart/Checkout [3] View Orders [4] Logout: ")
             if choice == '1':
-                shop = Shop(self.user_id, self.db_connect)
-                shop.choose_product()
+                self.shop.choose_product()  # Use the existing shop instance
             elif choice == '2':
-                shop = Shop(self.user_id, self.db_connect)
-                shop.display_cart()  # Call the method to display cart directly
-                self.modify_cart(shop)  # Call the method to modify cart if needed
+                self.shop.display_cart() 
+                self.modify_cart() 
             elif choice == '3':
                 self.view_orders()
             elif choice == '4':
@@ -24,20 +23,20 @@ class UserMenu:
             else:
                 print("Invalid choice. Please select again.")
 
-    def modify_cart(self, shop):
+    def modify_cart(self):
         while True:
             print("\n--- Cart Menu ---")
             action = input("Choose an option: [1] Modify Cart [2] Checkout [3] Back to Menu: ")
             if action == '1':
-                shop.modify_cart()
+                self.shop.modify_cart()
             elif action == '2':
-                shop.checkout()
+                self.shop.checkout()
                 break  # Exit cart menu after checkout
             elif action == '3':
                 break
             else:
                 print("Invalid choice. Please select again.")
-
+    
     def view_orders(self):
         orders_collection = self.db_connect.db['orders']
         order_count = orders_collection.count_documents({'user_id': self.user_id})
@@ -50,9 +49,9 @@ class UserMenu:
 
         print("\n--- Orders ---")
         for order in orders:
-            print(f"Order ID: {order['_id']}")
             print(f"Date: {order['date_time']}")
             print(f"Total Price: ${order['total_price']:.2f}")
             for item in order['items']:
-                print(f"  - {item['quantity']} x {item['name']} ({item['size'] if item['size'] else 'No Size'}) at ${item['price']:.2f} each")
+                print(f"  - {item['quantity']} x {item['item']} ${item['price']:.2f}")
             print()
+
