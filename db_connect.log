@@ -1,7 +1,0 @@
-2024-07-29 14:32:58,406 - INFO - Connected to MongoDB and selected database.
-2024-07-29 14:33:06,807 - WARNING - Invalid login attempt for username: adming.
-2024-07-29 14:33:13,765 - INFO - Login successful for username: admin.
-2024-07-29 14:33:18,267 - INFO - User exited the application.
-2024-07-29 17:03:55,927 - INFO - Connected to MongoDB and selected database.
-2024-07-29 17:04:06,799 - WARNING - Invalid login attempt for username: test.
-2024-07-29 17:04:21,544 - INFO - Login successful for username: test.

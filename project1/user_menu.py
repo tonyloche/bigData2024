@@ -1,10 +1,10 @@
 from shop import Shop
 
 class UserMenu:
-    def __init__(self, user_id, db_connect):
+    def __init__(self, user_id, db_functions):
         self.user_id = user_id
-        self.db_connect = db_connect
-        self.shop = Shop(self.user_id, self.db_connect.db)  # Create a single instance of Shop
+        self.db_functions = db_functions
+        self.shop = Shop(self.user_id, self.db_functions)  # Create a single instance of Shop
 
     def display_menu(self):
         while True:
@@ -38,14 +38,13 @@ class UserMenu:
                 print("Invalid choice. Please select again.")
     
     def view_orders(self):
-        orders_collection = self.db_connect.db['orders']
-        order_count = orders_collection.count_documents({'user_id': self.user_id})
+        order_count = self.db_functions.count_user_orders(self.user_id)
 
         if order_count == 0:
             print("No orders found.")
             return
 
-        orders = orders_collection.find({'user_id': self.user_id})
+        orders = self.db_functions.find_user_orders(self.user_id)
 
         print("\n--- Orders ---")
         for order in orders:
@@ -54,4 +53,3 @@ class UserMenu:
             for item in order['items']:
                 print(f"  - {item['quantity']} x {item['item']} ${item['price']:.2f}")
             print()
-

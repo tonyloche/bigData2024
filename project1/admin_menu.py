@@ -1,15 +1,23 @@
-from pymongo import MongoClient
+import logging
+
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('app.log')
+    ]
+)
 
 class AdminMenu:
-    def __init__(self, db_connect):
-        self.db_connect = db_connect
-        self.products_collection = self.db_connect.db['products']
-        self.orders_collection = self.db_connect.db['orders']
+    def __init__(self, db_functions):
+        self.db_functions = db_functions
 
     def display_menu(self):
         while True:
             print("\n--- Admin Menu ---")
-            choice = input("Choose an option: [1] Add New Product [2] View Product [3] Edit Product [4] Delete Product [5] View all orders [6] View all users [7] log out: ")
+            choice = input("Choose an option: [1] Add New Product [2] View Products [3] Edit Product [4] Delete Product [5] View All Orders [6] View All Users [7] Log Out: ")
             if choice == '1':
                 self.add_product()
             elif choice == '2':
@@ -42,13 +50,16 @@ class AdminMenu:
             'quantity': quantity
         }
         
-        self.products_collection.insert_one(product)
-        print("Product added successfully.")
+        if self.db_functions.insert_product(product):
+            print("Product added successfully.")
+            logging.info(f'Product added: {item}.') 
+        else:
+            print("Failed to add product.")
 
     def edit_product(self):
         self.display_products()
         product_name = input("Enter the name of the product to edit: ")
-        product = self.products_collection.find_one({'item': product_name})
+        product = self.db_functions.find_product_by_name(product_name)
         
         if product:
             print("Leave field blank to keep current value.")
@@ -62,23 +73,25 @@ class AdminMenu:
                 'quantity': int(new_quantity)
             }
             
-            self.products_collection.update_one({'_id': product['_id']}, {'$set': updated_product})
-            print("Product updated successfully.")
+            if self.db_functions.update_product(product['_id'], updated_product):
+                print("Product updated successfully.")
+                logging.info(f'Product updated: {product_name}.')
+            else:
+                print("Failed to update product.")
         else:
             print("Product not found.")
 
     def delete_product(self):
         self.display_products()
         product_name = input("Enter the name of the product to delete: ")
-        result = self.products_collection.delete_one({'item': product_name})
-        
-        if result.deleted_count > 0:
+        if self.db_functions.delete_product_by_name(product_name):
             print("Product deleted successfully.")
+            logging.info(f'Product deleted: {product_name}.')
         else:
             print("Product not found.")
 
     def view_all_orders(self):
-        orders = self.orders_collection.find()
+        orders = self.db_functions.find_all_orders()
         
         print("\n--- All Orders ---")
         for order in orders:
@@ -91,14 +104,14 @@ class AdminMenu:
             print()
 
     def display_products(self):
-        products = self.products_collection.find()
+        products = self.db_functions.find_all_products()
         print("\n--- Products List ---")
         for product in products:
             print(f"Name: {product['item']}, Price: ${product['price']:.2f}, Quantity: {product['quantity']}")
         print()
     
     def display_all_users(self):
-        users = self.db_connect.users_collection.find()
+        users = self.db_functions.find_all_users()
         print("\n--- All Users ---")
         for user in users:
             print(f"Username: {user['username']}")

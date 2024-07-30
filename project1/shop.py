@@ -1,16 +1,13 @@
-from pymongo import MongoClient
 from datetime import datetime
 
 class Shop:
-    def __init__(self, user_id, db):
+    def __init__(self, user_id, db_functions):
         self.user_id = user_id
-        self.db = db
-        self.products_collection = self.db['products']
-        self.orders_collection = self.db['orders']
+        self.db_functions = db_functions
         self.cart = []
 
     def display_products(self):
-        products = self.products_collection.find()
+        products = self.db_functions.products_collection.find()
         print("\n--- Products List ---")
         for index, product in enumerate(products):
             print(f"{index + 1}. {product['item']} - ${product['price']:.2f}")
@@ -21,7 +18,7 @@ class Shop:
         self.display_products()
         try:
             choice = int(input("Enter the number of the product you want to buy: ")) - 1
-            product = self.products_collection.find().skip(choice).limit(1).next()
+            product = self.db_functions.products_collection.find().skip(choice).limit(1).next()
             if not product:
                 print("Invalid choice. Product not found.")
                 return
@@ -86,14 +83,14 @@ class Shop:
     def update_products(self):
         for item in self.cart:
             query = {'item': item['item']}
-            product = self.products_collection.find_one(query)
+            product = self.db_functions.products_collection.find_one(query)
             if product:
                 new_quantity = product['quantity'] - item['quantity']
                 if new_quantity < 0:
                     print(f"Not enough stock for {item['item']}.")
                     continue  # Skip updating if there's not enough stock
                 
-                self.products_collection.update_one(
+                self.db_functions.products_collection.update_one(
                     {'_id': product['_id']},
                     {'$set': {'quantity': new_quantity}}
                 )
@@ -115,7 +112,7 @@ class Shop:
                 'total_price': total_price
             }
             # Insert the new order
-            self.orders_collection.insert_one(purchase)
+            self.db_functions.orders_collection.insert_one(purchase)
             print("Thank you for your purchase!")
             print(f"Total: ${total_price:.2f}")
             self.update_products()
