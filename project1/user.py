@@ -1,5 +1,7 @@
 import logging
 from db_functions import DBFunctions
+from admin_menu import AdminMenu
+from user_menu import UserMenu
 import re
 
 # Configure logging
@@ -48,11 +50,9 @@ class User:
             logging.info(f'Login successful for username: {self.username}.')
             
             if str(user_id) == "66a7f1bcff3c12945d83b915":
-                from admin_menu import AdminMenu
                 admin_menu = AdminMenu(self.db_functions)
                 admin_menu.display_menu()
             else:
-                from user_menu import UserMenu
                 user_menu = UserMenu(user_id, self.db_functions)
                 user_menu.display_menu()
         else:
